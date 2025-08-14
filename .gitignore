@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# Build
+build/
+dist/
+*.spec
+
+# OS
+.DS_Store
+
+# App data
+*.cinescribe
+*_assets/
+AI_assets/
+시나리오_assets/
+
+
