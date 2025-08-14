@@ -23,7 +23,7 @@ from ..service.library_service import LibraryService
 class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
-        self.setWindowTitle("CineScribe")
+        self.setWindowTitle("ShotCanvas")
         self.resize(1200, 800)
 
         self._project_library_view = ProjectLibraryView()
@@ -58,7 +58,7 @@ class MainWindow(QMainWindow):
     def focusInEvent(self, event) -> None:  # type: ignore[override]
         super().focusInEvent(event)
         path = get_current_project_path()
-        base_title = "CineScribe"
+        base_title = "ShotCanvas"
         if path:
             self.setWindowTitle(f"{base_title} — {path}")
         else:
@@ -73,7 +73,7 @@ class MainWindow(QMainWindow):
         # Only show the Project Library as a single tab
         self._tabs.clear()
         self._tabs.addTab(self._project_library_view, "프로젝트 관리")
-        self.setWindowTitle("CineScribe")
+        self.setWindowTitle("ShotCanvas")
 
     def enter_project_mode(self) -> None:
         # Build project tabs: Back + modules

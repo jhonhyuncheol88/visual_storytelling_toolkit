@@ -34,12 +34,12 @@ jobs:
 
       - name: Build with PyInstaller
         run: |
-          pyinstaller --noconfirm --name "CineScribe" --windowed main.py
+          pyinstaller --noconfirm --name "ShotCanvas" --windowed main.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: CineScribe-${{ matrix.os }}
+          name: ShotCanvas-${{ matrix.os }}
           path: |
             dist/**
 
