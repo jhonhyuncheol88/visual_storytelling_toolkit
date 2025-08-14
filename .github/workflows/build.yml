@@ -35,6 +35,16 @@ jobs:
       - name: Build with PyInstaller
         run: |
           pyinstaller --noconfirm --name "ShotCanvas" --windowed main.py
+      - name: Create DMG (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          APP_NAME="ShotCanvas.app"
+          APP_PATH="dist/ShotCanvas/${APP_NAME}"
+          mkdir -p pkg
+          # Applications로 심볼릭 링크(일반적인 DMG UX)
+          ln -s /Applications pkg/Applications || true
+          cp -R "${APP_PATH}" pkg/
+          hdiutil create -volname "ShotCanvas" -srcfolder pkg -ov -format UDZO ShotCanvas.dmg
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -42,6 +52,7 @@ jobs:
           name: ShotCanvas-${{ matrix.os }}
           path: |
             dist/**
+            ShotCanvas.dmg
 
   release:
     if: startsWith(github.ref, 'refs/tags/')
