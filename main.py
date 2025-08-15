@@ -17,10 +17,14 @@ src_dir = os.path.join(current_dir, "src")
 if os.path.exists(src_dir):
     sys.path.insert(0, src_dir)
 
-# ShotCanvas 애플리케이션 실행
-from cinescribe.app import main
-
+# ShotCanvas GUI 직접 실행
 if __name__ == "__main__":
-    main()
+    from PySide6.QtWidgets import QApplication
+    from cinescribe.views.main_window import MainWindow
+    
+    app = QApplication(sys.argv)
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec())
 
 
