@@ -42,9 +42,6 @@ def build_exe():
         "--hidden-import=PySide6.QtWidgets",
         "--hidden-import=PIL",
         "--hidden-import=PIL._tkinter_finder",
-        "--add-data=AI_assets;AI_assets",  # AI_assets 폴더 포함
-        "--add-data=시나리오_assets;시나리오_assets",  # 시나리오_assets 폴더 포함
-        "--add-data=광복절 AI 영상_assets;광복절 AI 영상_assets",  # 광복절 AI 영상_assets 폴더 포함
         "--clean",  # 이전 빌드 캐시 정리
         "main.py"
     ]

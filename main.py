@@ -10,6 +10,14 @@ def _ensure_src_on_path() -> None:
     src_path = os.path.join(here, "src")
     if src_path not in sys.path:
         sys.path.insert(0, src_path)
+        print(f"개발 환경 경로 추가: {src_path}")
+    
+    # 추가: cinescribe 모듈 경로도 확인
+    cinescribe_path = os.path.join(src_path, "cinescribe")
+    if os.path.exists(cinescribe_path):
+        print(f"cinescribe 모듈 경로 확인: {cinescribe_path}")
+    else:
+        print(f"경고: cinescribe 모듈 경로를 찾을 수 없음: {cinescribe_path}")
 
 
 def _ensure_paths_for_frozen() -> None:
@@ -20,9 +28,8 @@ def _ensure_paths_for_frozen() -> None:
         # PyInstaller가 수집한 모듈들을 찾기 위한 경로들
         candidates = [
             base_dir,  # _MEIPASS 디렉토리 (PyInstaller가 모듈을 여기에 복사)
-            os.path.join(base_dir, "src"),
-            os.path.join(base_dir, "cinescribe"),
-            os.path.join(os.path.dirname(sys.executable), "src"),
+            os.path.join(base_dir, "cinescribe"),  # cinescribe 모듈이 직접 복사된 위치
+            os.path.join(base_dir, "src", "cinescribe"),  # src 구조가 유지된 경우
         ]
         
         for p in candidates:
@@ -32,6 +39,17 @@ def _ensure_paths_for_frozen() -> None:
                     print(f"PyInstaller 경로 추가: {p}")
             except Exception as e:
                 print(f"경로 추가 실패 {p}: {e}")
+        
+        # 추가: cinescribe 모듈이 루트 레벨에 있는지 확인
+        cinescribe_root = os.path.join(base_dir, "cinescribe")
+        if os.path.exists(cinescribe_root):
+            print(f"cinescribe 모듈 루트 발견: {cinescribe_root}")
+        else:
+            print(f"cinescribe 모듈 루트를 찾을 수 없음: {cinescribe_root}")
+            # 대안: base_dir 자체를 sys.path에 추가 (모든 모듈이 여기에 있을 수 있음)
+            if base_dir not in sys.path:
+                sys.path.insert(0, base_dir)
+                print(f"대안 경로 추가: {base_dir}")
 
 
 def _try_import_cinescribe() -> bool:
