@@ -26,9 +26,9 @@ def build_exe():
         "--onefile",  # 단일 exe 파일로 생성
         "--console",  # Windows에서 콘솔 창 표시 (디버깅용)
         "--name=ShotCanvas",  # exe 파일 이름
-        "--collect-all=cinescribe",  # cinescribe 패키지 전체 수집
+    
         "--collect-all=PySide6",  # PySide6 패키지 전체 수집
-        "--hidden-import=cinescribe",
+      
         "--hidden-import=PySide6",
         "--hidden-import=shiboken6",
         "--clean",  # 이전 빌드 캐시 정리
