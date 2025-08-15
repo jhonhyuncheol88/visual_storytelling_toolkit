@@ -66,6 +66,19 @@ class CinematicView(QWidget):
     def showEvent(self, event) -> None:  # type: ignore[override]
         super().showEvent(event)
         self._ensure_repo()
+        # 첫 표시 시에도 에디터가 비어있지 않도록 현재 키 데이터를 자동 로드
+        try:
+            self._on_load()
+        except Exception:
+            pass
+
+    def refresh(self) -> None:
+        # 외부에서 호출 가능한 갱신 API: 서비스 보장 후 에디터 자동 로드
+        self._ensure_repo()
+        try:
+            self._on_load()
+        except Exception:
+            pass
 
     def _ensure_repo(self) -> None:
         db_path = get_current_project_path()
@@ -106,15 +119,39 @@ class CinematicView(QWidget):
     def _on_save(self) -> None:
         self._ensure_repo()
         if not self._repo:
+            self._status.setText("저장소가 초기화되지 않았습니다.")
             return
         content = self._editor.toPlainText()
+        print(f"CinematicView 저장 시도: content='{content[:100]}...'")
+        
         try:
+            # JSON 형식으로 저장 시도
             data = _json.loads(content) if content.strip() else {}
-            self._repo.upsert("json", _json.dumps(data, ensure_ascii=False))
+            json_content = _json.dumps(data, ensure_ascii=False)
+            print(f"CinematicView JSON 변환 성공: {json_content[:100]}...")
+            
+            result_id = self._repo.upsert("json", json_content)
+            print(f"CinematicView 저장 성공: ID={result_id}")
             self._status.setText("저장 완료: 시네마틱 보드(JSON)")
-        except Exception:
-            self._repo.upsert("text", content)
-            self._status.setText("저장 완료: 시네마틱 보드(Text)")
+            
+        except _json.JSONDecodeError as e:
+            # JSON 파싱 실패 시 text로 저장
+            print(f"CinematicView JSON 파싱 실패, text로 저장: {e}")
+            try:
+                result_id = self._repo.upsert("text", content)
+                print(f"CinematicView text 저장 성공: ID={result_id}")
+                self._status.setText("저장 완료: 시네마틱 보드(Text)")
+            except Exception as text_e:
+                error_details = f"Text 저장 실패: {text_e}"
+                self._status.setText(error_details)
+                print(f"CinematicView text 저장 오류: {error_details}")
+                
+        except Exception as e:
+            # 기타 저장 오류
+            import traceback
+            error_details = f"저장 실패: {e}\n{traceback.format_exc()}"
+            self._status.setText(error_details)
+            print(f"CinematicView 저장 오류: {error_details}")
 
     def _on_export(self) -> None:
         self._ensure_repo()

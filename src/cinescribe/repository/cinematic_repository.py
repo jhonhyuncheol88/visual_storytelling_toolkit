@@ -34,25 +34,35 @@ class CinematicRepository:
                   content TEXT NOT NULL,
                   updated_at TEXT DEFAULT (datetime('now'))
                 );
+                -- 보드는 항상 단일 행(id=1)
                 INSERT OR IGNORE INTO CinematicBoard(id, format, content) VALUES(1, 'json', '{}');
                 """
             )
 
     def upsert(self, format: str, content: str) -> int:
+        print(f"CinematicRepository.upsert 호출: format='{format}', content='{content[:100]}...'")
         with self._connect() as conn:
-            cur = conn.execute(
-                """
-                INSERT INTO CinematicBoard(id, format, content)
-                VALUES(1, ?, ?)
-                ON CONFLICT(id) DO UPDATE SET
-                  format=excluded.format,
-                  content=excluded.content,
-                  updated_at=datetime('now')
-                ;
-                """,
-                (format, content),
-            )
-            return int(cur.lastrowid or 1)
+            try:
+                cur = conn.execute(
+                    """
+                    INSERT INTO CinematicBoard(id, format, content)
+                    VALUES(1, ?, ?)
+                    ON CONFLICT(id) DO UPDATE SET
+                      format=excluded.format,
+                      content=excluded.content,
+                      updated_at=datetime('now')
+                    ;
+                    """,
+                    (format, content),
+                )
+                result_id = int(cur.lastrowid or 1)
+                print(f"CinematicRepository.upsert 성공: ID={result_id}")
+                return result_id
+            except Exception as e:
+                print(f"CinematicRepository.upsert 실패: {e}")
+                import traceback
+                print(f"Traceback: {traceback.format_exc()}")
+                raise
 
     def get(self) -> Optional[CinematicBoard]:
         with self._connect() as conn:

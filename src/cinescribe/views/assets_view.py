@@ -47,6 +47,11 @@ class AssetsView(QWidget):
             pass
         self._refresh()
 
+    def refresh(self) -> None:
+        # 외부에서 호출 가능한 갱신 API
+        self._ensure()
+        self._refresh()
+
     def _ensure(self) -> None:
         db_path = get_current_project_path()
         if not db_path:

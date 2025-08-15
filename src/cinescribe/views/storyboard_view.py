@@ -63,17 +63,18 @@ class StoryboardView(QWidget):
         self._apply_text_contrast()
 
     def showEvent(self, event) -> None:  # type: ignore[override]
-        # 프로젝트 탭으로 진입할 때마다 저장소/장면 상태 갱신
         try:
             super().showEvent(event)
         except Exception:
             pass
+        self._refresh()
+
+    def refresh(self) -> None:
+        # 외부에서 호출 가능한 갱신 API
         self._ensure_repo()
         self._ensure_default_scene()
         self._refresh_scenes()
-        if hasattr(self, "_status"):
-            self._status.setText("")
-
+        self._apply_text_contrast()
 
     def _apply_text_contrast(self) -> None:
         # 배경 밝기에 따라 리스트 텍스트 색상을 고대비로 설정

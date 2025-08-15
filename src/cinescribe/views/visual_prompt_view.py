@@ -67,6 +67,19 @@ class VisualPromptView(QWidget):
     def showEvent(self, event) -> None:  # type: ignore[override]
         super().showEvent(event)
         self._ensure_service()
+        # 첫 표시 시에도 에디터가 비어있지 않도록 현재 키 데이터를 자동 로드
+        try:
+            self._on_load()
+        except Exception:
+            pass
+
+    def refresh(self) -> None:
+        # 외부에서 호출 가능한 갱신 API: 서비스 보장 후 에디터 자동 로드
+        self._ensure_service()
+        try:
+            self._on_load()
+        except Exception:
+            pass
 
     def _ensure_service(self) -> None:
         db_path = get_current_project_path()
@@ -110,7 +123,11 @@ class VisualPromptView(QWidget):
             self._doc_service.save_json(self._DOC_KEY, data)
             self._status.setText("저장 완료: 비쥬얼 프롬프트")
         except Exception as e:
-            self._status.setText(f"저장 실패: {e}")
+            # 더 자세한 오류 정보 표시
+            import traceback
+            error_details = f"저장 실패: {e}\n{traceback.format_exc()}"
+            self._status.setText(error_details)
+            print(f"VisualPromptView 저장 오류: {error_details}")
 
     def _on_export(self) -> None:
         self._ensure_service()
