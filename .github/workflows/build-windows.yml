@@ -1,0 +1,63 @@
+name: Windows Exe 빌드 및 배포
+
+on:
+  push:
+    tags:
+      - 'v*'  # v1.0.0 같은 태그로 푸시할 때 실행
+  workflow_dispatch:  # 수동 실행 가능
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+    - name: 코드 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: Python 설정
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: 의존성 설치
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: PyInstaller 설치
+      run: |
+        pip install pyinstaller
+        
+    - name: Windows exe 빌드
+      run: |
+        python build_exe.py
+        
+    - name: 빌드 결과 확인
+      run: |
+        if (Test-Path "dist\CineScriber.exe") {
+          Write-Host "빌드 성공: CineScriber.exe 파일이 생성되었습니다."
+          Get-ChildItem "dist\" -Recurse | ForEach-Object { Write-Host $_.FullName }
+        } else {
+          Write-Host "빌드 실패: exe 파일을 찾을 수 없습니다."
+          exit 1
+        }
+        
+    - name: GitHub Release 생성
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          dist/CineScriber.exe
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: 빌드 아티팩트 업로드
+      if: github.event_name == 'workflow_dispatch'
+      uses: actions/upload-artifact@v4
+      with:
+        name: CineScriber-Windows
+        path: dist/CineScriber.exe
+        retention-days: 30
