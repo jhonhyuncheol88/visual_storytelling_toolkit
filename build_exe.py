@@ -20,28 +20,17 @@ def build_exe():
     if build_dir.exists():
         shutil.rmtree(build_dir)
     
-    # PyInstaller 명령어 구성 - cinescribe 모듈 수집 개선
+    # PyInstaller 명령어 구성 - Windows 실행 테스트용
     cmd = [
         "pyinstaller",
         "--onefile",  # 단일 exe 파일로 생성
         "--console",  # Windows에서 콘솔 창 표시 (디버깅용)
         "--name=ShotCanvas",  # exe 파일 이름
-        "--paths=src",  # src 폴더를 Python 경로에 추가
         "--collect-all=cinescribe",  # cinescribe 패키지 전체 수집
+        "--collect-all=PySide6",  # PySide6 패키지 전체 수집
         "--hidden-import=cinescribe",
-        "--hidden-import=cinescribe.app",
-        "--hidden-import=cinescribe.domain",
-        "--hidden-import=cinescribe.repository",
-        "--hidden-import=cinescribe.service",
-        "--hidden-import=cinescribe.utils",
-        "--hidden-import=cinescribe.viewmodel",
-        "--hidden-import=cinescribe.views",
-        "--hidden-import=cinescribe.widgets",
-        "--hidden-import=PySide6.QtCore",
-        "--hidden-import=PySide6.QtGui", 
-        "--hidden-import=PySide6.QtWidgets",
-        "--hidden-import=PIL",
-        "--hidden-import=PIL._tkinter_finder",
+        "--hidden-import=PySide6",
+        "--hidden-import=shiboken6",
         "--clean",  # 이전 빌드 캐시 정리
         "main.py"
     ]
