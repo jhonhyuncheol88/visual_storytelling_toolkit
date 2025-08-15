@@ -88,8 +88,13 @@ class MainWindow(QMainWindow):
         self._tabs.addTab(self._characters_view, "캐릭터")
         self._tabs.addTab(self._assets_view, "에셋")
         self._tabs.setCurrentIndex(1)
-        # Hook tab change for back behavior
+        # Hook tab change for back behavior + 데이터 새로고침
         self._tabs.currentChanged.connect(self._on_tabs_changed)
+        # 진입 즉시 현재 탭 데이터 갱신 시도
+        try:
+            self._refresh_current_tab()
+        except Exception:
+            pass
         # mark opened and update title
         self.mark_project_opened()
         self.focusInEvent(None)  # refresh title
@@ -102,5 +107,17 @@ class MainWindow(QMainWindow):
             except Exception:
                 pass
             self.enter_library_mode()
+            return
+        # 다른 탭으로 전환하면 해당 탭이 refresh를 지원할 경우 호출
+        self._refresh_current_tab()
+
+    def _refresh_current_tab(self) -> None:
+        idx = self._tabs.currentIndex()
+        w = self._tabs.widget(idx)
+        if w and hasattr(w, "refresh"):
+            try:
+                getattr(w, "refresh")()
+            except Exception:
+                pass
 
 

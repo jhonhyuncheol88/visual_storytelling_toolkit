@@ -1,3 +1,23 @@
+from __future__ import annotations
+
+import PyInstaller.__main__
+
+
+def main() -> None:
+    PyInstaller.__main__.run([
+        "-F",
+        "-w",
+        "--name",
+        "ShotCanvas",
+        "--paths",
+        "src",
+        "main.py",
+    ])
+
+
+if __name__ == "__main__":
+    main()
+
 #!/usr/bin/env python3
 """
 Windows용 exe 파일 빌드 스크립트

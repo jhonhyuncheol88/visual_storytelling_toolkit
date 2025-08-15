@@ -66,6 +66,19 @@ class ProjectHubView(QWidget):
     def showEvent(self, event) -> None:  # type: ignore[override]
         super().showEvent(event)
         self._ensure_service()
+        # 첫 표시 시에도 에디터가 비어있지 않도록 현재 키 데이터를 자동 로드
+        try:
+            self._on_load()
+        except Exception:
+            pass
+
+    def refresh(self) -> None:
+        # 외부에서 호출 가능한 갱신 API: 서비스 보장 후 에디터 자동 로드
+        self._ensure_service()
+        try:
+            self._on_load()
+        except Exception:
+            pass
 
     def _ensure_service(self) -> None:
         db_path = get_current_project_path()
