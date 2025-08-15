@@ -94,7 +94,7 @@ class CharactersView(QWidget):
     def refresh(self) -> None:
         # 외부에서 호출 가능한 갱신 API
         self._ensure()
-        self._refresh_shots()
+        self._refresh()
 
     def _ensure(self) -> None:
         db_path = get_current_project_path()

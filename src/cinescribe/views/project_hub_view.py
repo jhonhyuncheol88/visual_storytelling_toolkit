@@ -182,9 +182,15 @@ class ProjectHubView(QWidget):
         data = self._doc_service.load_json("logline")
         import json as _json
         if data is None:
-            self._editor.setPlainText("{}")
+            self._editor.setPlainText("")
         else:
-            self._editor.setPlainText(_json.dumps(data, ensure_ascii=False, indent=2))
+            # 데이터 타입에 따라 다르게 표시
+            if isinstance(data, dict) and "type" in data and data["type"] == "text":
+                # 텍스트 형식이면 content만 표시
+                self._editor.setPlainText(data.get("content", ""))
+            else:
+                # JSON 형식이면 포맷팅해서 표시
+                self._editor.setPlainText(_json.dumps(data, ensure_ascii=False, indent=2))
         self._status.setText("불러오기 완료: 로그라인")
 
     def _on_save(self) -> None:
@@ -195,7 +201,19 @@ class ProjectHubView(QWidget):
         try:
             import json as _json
 
-            data = _json.loads(content) if content.strip() else {}
+            # 텍스트 내용을 그대로 저장 (JSON 강제 아님)
+            if not content.strip():
+                data = {}
+            else:
+                # JSON 형식인지 확인
+                try:
+                    data = _json.loads(content)
+                    print("JSON 형식으로 저장됨")
+                except _json.JSONDecodeError:
+                    # JSON이 아니면 텍스트로 저장
+                    data = {"content": content, "type": "text"}
+                    print("텍스트 형식으로 저장됨")
+            
             self._doc_service.save_json("logline", data)
             self._status.setText("저장 완료: 로그라인")
         except Exception as e:

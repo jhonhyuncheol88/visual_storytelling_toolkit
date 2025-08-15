@@ -12,10 +12,14 @@ def _ensure_src_on_path() -> None:
         sys.path.insert(0, src_path)
         print(f"개발 환경 경로 추가: {src_path}")
     
-    # 추가: cinescribe 모듈 경로도 확인
+    # 추가: cinescribe 모듈 경로도 확인하고 실제로 추가
     cinescribe_path = os.path.join(src_path, "cinescribe")
     if os.path.exists(cinescribe_path):
         print(f"cinescribe 모듈 경로 확인: {cinescribe_path}")
+        # 실제로 cinescribe 경로를 sys.path에 추가
+        if cinescribe_path not in sys.path:
+            sys.path.insert(0, cinescribe_path)
+            print(f"cinescribe 모듈 경로 추가: {cinescribe_path}")
     else:
         print(f"경고: cinescribe 모듈 경로를 찾을 수 없음: {cinescribe_path}")
 
@@ -30,6 +34,7 @@ def _ensure_paths_for_frozen() -> None:
             base_dir,  # _MEIPASS 디렉토리 (PyInstaller가 모듈을 여기에 복사)
             os.path.join(base_dir, "cinescribe"),  # cinescribe 모듈이 직접 복사된 위치
             os.path.join(base_dir, "src", "cinescribe"),  # src 구조가 유지된 경우
+            os.path.join(base_dir, "src"),  # src 폴더도 추가
         ]
         
         for p in candidates:
@@ -40,10 +45,13 @@ def _ensure_paths_for_frozen() -> None:
             except Exception as e:
                 print(f"경로 추가 실패 {p}: {e}")
         
-        # 추가: cinescribe 모듈이 루트 레벨에 있는지 확인
+        # 추가: cinescribe 모듈이 루트 레벨에 있는지 확인하고 경로 추가
         cinescribe_root = os.path.join(base_dir, "cinescribe")
         if os.path.exists(cinescribe_root):
             print(f"cinescribe 모듈 루트 발견: {cinescribe_root}")
+            if cinescribe_root not in sys.path:
+                sys.path.insert(0, cinescribe_root)
+                print(f"cinescribe 루트 경로 추가: {cinescribe_root}")
         else:
             print(f"cinescribe 모듈 루트를 찾을 수 없음: {cinescribe_root}")
             # 대안: base_dir 자체를 sys.path에 추가 (모든 모듈이 여기에 있을 수 있음)
@@ -71,12 +79,22 @@ def main() -> None:
     _ensure_src_on_path()
     _ensure_paths_for_frozen()
     
+    # 디버깅: 현재 sys.path 상태 출력
+    print("\n=== 현재 sys.path 상태 ===")
+    for i, path in enumerate(sys.path):
+        print(f"  {i}: {path}")
+    
     # 2단계: cinescribe 모듈 임포트 시도
     if not _try_import_cinescribe():
         # 3단계: 추가 폴백 - 경로 재설정 후 재시도
         print("추가 경로 설정 시도...")
         _ensure_src_on_path()
         _ensure_paths_for_frozen()
+        
+        # 재시도 후 sys.path 상태 재출력
+        print("\n=== 재시도 후 sys.path 상태 ===")
+        for i, path in enumerate(sys.path):
+            print(f"  {i}: {path}")
         
         if not _try_import_cinescribe():
             print("=== 오류: cinescribe 모듈을 찾을 수 없습니다 ===")

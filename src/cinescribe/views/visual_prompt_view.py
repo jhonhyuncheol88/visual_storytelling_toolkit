@@ -106,9 +106,15 @@ class VisualPromptView(QWidget):
         data = self._doc_service.load_json(self._DOC_KEY)
         import json as _json
         if data is None:
-            self._editor.setPlainText("{}")
+            self._editor.setPlainText("")
         else:
-            self._editor.setPlainText(_json.dumps(data, ensure_ascii=False, indent=2))
+            # 데이터 타입에 따라 다르게 표시
+            if isinstance(data, dict) and "type" in data and data["type"] == "text":
+                # 텍스트 형식이면 content만 표시
+                self._editor.setPlainText(data.get("content", ""))
+            else:
+                # JSON 형식이면 포맷팅해서 표시
+                self._editor.setPlainText(_json.dumps(data, ensure_ascii=False, indent=2))
         self._status.setText("불러오기 완료: 비쥬얼 프롬프트")
 
     def _on_save(self) -> None:
@@ -119,9 +125,25 @@ class VisualPromptView(QWidget):
         try:
             import json as _json
 
-            data = _json.loads(content) if content.strip() else {}
+            # 텍스트 내용을 그대로 저장 (JSON 강제 아님)
+            if not content.strip():
+                # 빈 내용이면 빈 객체로 저장
+                data = {}
+            else:
+                # JSON 형식인지 확인
+                try:
+                    data = _json.loads(content)
+                    # JSON 형식이면 파싱된 데이터로 저장
+                    print("JSON 형식으로 저장됨")
+                except _json.JSONDecodeError:
+                    # JSON이 아니면 텍스트로 저장
+                    data = {"content": content, "type": "text"}
+                    print("텍스트 형식으로 저장됨")
+            
+            # 데이터 저장
             self._doc_service.save_json(self._DOC_KEY, data)
             self._status.setText("저장 완료: 비쥬얼 프롬프트")
+            
         except Exception as e:
             # 더 자세한 오류 정보 표시
             import traceback

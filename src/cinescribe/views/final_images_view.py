@@ -64,7 +64,7 @@ class FinalImagesView(QWidget):
             super().showEvent(event)
         except Exception:
             pass
-        self._refresh()
+        self.refresh()  # _refresh -> refresh로 수정
 
     def refresh(self) -> None:
         # 외부에서 호출 가능한 갱신 API

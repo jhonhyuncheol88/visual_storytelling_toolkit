@@ -34,10 +34,10 @@ class AssetsView(QWidget):
         root.addLayout(toolbar)
         root.addWidget(self._list)
 
-        self._search.textChanged.connect(self._refresh)
-        btn_refresh.clicked.connect(self._refresh)
+        self._search.textChanged.connect(self._refresh_assets)
+        btn_refresh.clicked.connect(self._refresh_assets)
         self._list.itemDoubleClicked.connect(self._on_edit_tags)
-        self._refresh()
+        self._refresh_assets()
 
     def showEvent(self, event) -> None:  # type: ignore[override]
         # 탭 전환 등으로 화면에 표시될 때마다 최신 데이터로 새로고침
@@ -45,12 +45,12 @@ class AssetsView(QWidget):
             super().showEvent(event)
         except Exception:
             pass
-        self._refresh()
+        self._refresh_assets()
 
     def refresh(self) -> None:
         # 외부에서 호출 가능한 갱신 API
         self._ensure()
-        self._refresh()
+        self._refresh_assets()  # _refresh -> _refresh_assets로 변경
 
     def _ensure(self) -> None:
         db_path = get_current_project_path()
@@ -59,7 +59,7 @@ class AssetsView(QWidget):
         if self._repo is None or self._repo._db_path != db_path:
             self._repo = AssetRepository(db_path)
 
-    def _refresh(self) -> None:
+    def _refresh_assets(self) -> None:  # 메서드명 변경
         self._ensure()
         if not self._repo:
             return
@@ -105,6 +105,6 @@ class AssetsView(QWidget):
         if not ok:
             return
         self._repo.update_tags(asset_id, text)
-        self._refresh()
+        self._refresh_assets()
 
 

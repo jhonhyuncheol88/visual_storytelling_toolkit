@@ -104,7 +104,7 @@ class CinematicView(QWidget):
             return
         board = self._repo.get()
         if board is None:
-            self._editor.setPlainText("{}")
+            self._editor.setPlainText("")
         else:
             if board.format == "json":
                 try:
