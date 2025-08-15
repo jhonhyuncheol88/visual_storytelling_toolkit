@@ -74,6 +74,10 @@ def _try_import_cinescribe() -> bool:
 def main() -> None:
     """메인 함수 - 개발/배포 환경 모두에서 cinescribe를 찾도록 경로 보장 후 임포트"""
     print("=== ShotCanvas 실행 시작 ===")
+    print(f"Python 버전: {sys.version}")
+    print(f"플랫폼: {sys.platform}")
+    print(f"실행 파일: {sys.executable}")
+    print(f"현재 작업 디렉토리: {os.getcwd()}")
     
     # 1단계: 기본 경로 설정
     _ensure_src_on_path()
@@ -103,6 +107,16 @@ def main() -> None:
                 print(f"  {i}: {path}")
             print("\n현재 작업 디렉토리:", os.getcwd())
             print("실행 파일 위치:", os.path.abspath(__file__))
+            
+            # Windows에서 사용자 입력 대기
+            if sys.platform.startswith('win'):
+                print("\n=== Windows 디버깅 정보 ===")
+                print("아무 키나 누르면 종료됩니다...")
+                try:
+                    input()
+                except:
+                    pass
+            
             sys.exit(1)
     
     # 4단계: 앱 실행
@@ -114,6 +128,16 @@ def main() -> None:
         print(f"앱 실행 중 오류 발생: {e}")
         import traceback
         traceback.print_exc()
+        
+        # Windows에서 사용자 입력 대기
+        if sys.platform.startswith('win'):
+            print("\n=== Windows 오류 정보 ===")
+            print("아무 키나 누르면 종료됩니다...")
+            try:
+                input()
+            except:
+                pass
+        
         sys.exit(1)
 
 

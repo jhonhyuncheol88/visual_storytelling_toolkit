@@ -24,7 +24,7 @@ def build_exe():
     cmd = [
         "pyinstaller",
         "--onefile",  # 단일 exe 파일로 생성
-        "--windowed",  # 콘솔 창 숨김
+        "--console",  # Windows에서 콘솔 창 표시 (디버깅용)
         "--name=ShotCanvas",  # exe 파일 이름
         "--paths=src",  # src 폴더를 Python 경로에 추가
         "--collect-all=cinescribe",  # cinescribe 패키지 전체 수집
