@@ -1,32 +1,54 @@
-# CineScriber - AI 기반 시나리오 작성 도구
+# ShotCanvas - AI 기반 시나리오 작성 도구
 
-CineScriber는 AI를 활용한 시나리오 작성 및 영상 제작 지원 도구입니다.
+ShotCanvas는 AI를 활용한 시나리오 작성, 스토리보드 제작, 시네마틱 시퀀스 관리를 위한 데스크톱 애플리케이션입니다.
 
-## 🚀 기능
+## 🚀 다운로드 및 설치
 
-- AI 기반 시나리오 작성 지원
-- 캐릭터 및 장면 관리
-- 스토리보드 생성
-- 시각적 프롬프트 생성
-- 프로젝트 라이브러리 관리
+### Windows 사용자
 
-## 📋 요구사항
+#### 방법 1: GitHub Releases (권장)
+1. [Releases 페이지](https://github.com/사용자명/저장소명/releases) 방문
+2. 최신 버전의 `ShotCanvas.exe` 다운로드
+3. 파일을 원하는 폴더에 저장
 
-- Python 3.11 이상
-- Windows 10/11 (exe 빌드용)
-- PySide6 (Qt GUI 프레임워크)
-- Pillow (이미지 처리)
+#### 방법 2: GitHub Actions Artifacts
+1. [Actions 페이지](https://github.com/사용자명/저장소명/actions) 방문
+2. 최신 `ShotCanvas-Windows` 아티팩트 다운로드
 
-## 🛠️ 설치 및 실행
+### 설치 후 실행
 
-### 개발 환경에서 실행
+1. **Windows 보안 경고 해결**:
+   - exe 파일을 우클릭 → "속성"
+   - "보안" 섹션에서 "차단 해제" 체크박스 선택
+   - "확인" 클릭
+
+2. **Windows Defender 허용**:
+   - Windows Defender 알림에서 "추가 정보" 클릭
+   - "실행" 버튼 클릭
+
+3. **SmartScreen 우회** (필요시):
+   - SmartScreen 경고에서 "추가 정보" 클릭
+   - "실행" 버튼 클릭
+
+## 🎯 주요 기능
+
+- **프로젝트 관리**: 시나리오 프로젝트 생성 및 관리
+- **AI 비주얼 프롬프트**: AI를 활용한 시각적 아이디어 생성
+- **시네마틱 시퀀스**: 영화적 장면 구성 및 관리
+- **스토리보드**: 시각적 스토리텔링 도구
+- **에셋 관리**: 이미지, 오디오 등 미디어 파일 관리
+- **캐릭터 관리**: 등장인물 정보 및 설정 관리
+
+## 🛠️ 개발자용 정보
+
+### 로컬 개발 환경 설정
 
 ```bash
 # 저장소 클론
-git clone <repository-url>
-cd 시나리오_프로그램
+git clone https://github.com/사용자명/저장소명.git
+cd 저장소명
 
-# 가상환경 생성 (권장)
+# 가상환경 생성 및 활성화
 python -m venv venv
 venv\Scripts\activate  # Windows
 source venv/bin/activate  # macOS/Linux
@@ -34,94 +56,73 @@ source venv/bin/activate  # macOS/Linux
 # 의존성 설치
 pip install -r requirements.txt
 
-# 애플리케이션 실행
+# 개발 모드 실행
 python main.py
 ```
 
-### Windows Exe 파일로 실행
+### Windows exe 빌드
 
-1. **자동 빌드 (GitHub Actions)**
-   - GitHub 저장소에 코드를 푸시
-   - 태그를 생성하여 GitHub Actions 실행
-   - `dist/CineScriber.exe` 파일 다운로드
+```bash
+# 배치 파일 사용 (권장)
+build_exe.bat
 
-2. **로컬 빌드**
+# 또는 Python 스크립트 사용
+python build_exe.py
+
+# 또는 spec 파일 직접 사용
+pyinstaller build_exe.spec
+```
+
+### GitHub Actions를 통한 자동 빌드
+
+1. **태그 기반 자동 빌드**:
    ```bash
-   # Windows에서
-   build_exe.bat
-   
-   # 또는 Python으로
-   python build_exe.py
+   git tag v1.0.0
+   git push origin v1.0.0
    ```
 
-## 🔧 빌드 설정
+2. **수동 빌드**: GitHub 저장소의 Actions 탭에서 "Run workflow" 실행
 
-### PyInstaller 설정
+## 📋 시스템 요구사항
 
-- `CineScriber.spec`: PyInstaller 설정 파일
-- `build_exe.py`: 빌드 스크립트
-- `build_exe.bat`: Windows 배치 파일
+- **운영체제**: Windows 10/11 (64비트)
+- **메모리**: 최소 4GB RAM (권장 8GB+)
+- **저장공간**: 최소 500MB
+- **Python**: 3.11+ (개발용)
 
-### 포함되는 파일
+## 🔧 문제 해결
 
-- `AI_assets/`: AI 관련 에셋
-- `시나리오_assets/`: 시나리오 관련 에셋
-- 모든 Python 모듈 및 의존성
+### 일반적인 문제들
 
-## 📦 GitHub Actions
+1. **"cinescribe 모듈을 찾을 수 없습니다" 오류**
+   - `build_exe.spec` 파일을 사용하여 빌드
+   - `--collect-all=cinescribe` 옵션 확인
 
-자동 빌드 및 배포를 위한 GitHub Actions 워크플로우가 포함되어 있습니다:
+2. **Windows에서 실행 차단**
+   - 파일 속성에서 "차단 해제" 체크
+   - Windows Defender에서 "허용" 선택
 
-- **트리거**: 태그 푸시 또는 수동 실행
-- **플랫폼**: Windows
-- **결과**: GitHub Releases에 exe 파일 자동 업로드
+3. **PySide6 관련 오류**
+   - `requirements.txt`에서 PySide6 버전 확인
+   - 가상환경 재생성 및 의존성 재설치
 
-### 사용 방법
+### 추가 지원
 
-1. 코드를 GitHub에 푸시
-2. 태그 생성: `git tag v1.0.0 && git push origin v1.0.0`
-3. GitHub Actions에서 자동 빌드 실행
-4. Releases에서 exe 파일 다운로드
+- **Issues**: [GitHub Issues](https://github.com/사용자명/저장소명/issues)에서 버그 리포트
+- **Discussions**: [GitHub Discussions](https://github.com/사용자명/저장소명/discussions)에서 질문 및 제안
 
-## 🏗️ 프로젝트 구조
-
-```
-시나리오_프로그램/
-├── src/cinescribe/          # 메인 애플리케이션
-│   ├── views/               # UI 뷰
-│   ├── service/             # 비즈니스 로직
-│   ├── repository/          # 데이터 접근
-│   └── domain/              # 도메인 모델
-├── AI_assets/               # AI 관련 에셋
-├── 시나리오_assets/          # 시나리오 관련 에셋
-├── main.py                  # 진입점
-├── build_exe.py             # 빌드 스크립트
-├── CineScriber.spec         # PyInstaller 설정
-└── .github/workflows/       # GitHub Actions
-```
-
-## 🐛 문제 해결
-
-### 빌드 오류
-
-1. **PyInstaller 오류**: `pip install --upgrade pyinstaller`
-2. **의존성 누락**: `pip install -r requirements.txt`
-3. **경로 문제**: 절대 경로 사용 확인
-
-### 실행 오류
-
-1. **DLL 누락**: Visual C++ 재배포 패키지 설치
-2. **권한 문제**: 관리자 권한으로 실행
-3. **파일 경로**: 한글 경로 문제 가능성
-
-## 📝 라이선스
+## 📄 라이선스
 
 이 프로젝트는 MIT 라이선스 하에 배포됩니다.
 
-## 🤝 기여
+## 🤝 기여하기
 
-버그 리포트, 기능 제안, 풀 리퀘스트를 환영합니다!
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ---
 
-**참고**: 이 도구는 Windows 환경에서 테스트되었습니다.
+**💡 팁**: 첫 실행 시 Windows 보안 경고가 나타날 수 있습니다. 이는 정상적인 현상이며, 위의 설치 가이드를 따라 해결할 수 있습니다.

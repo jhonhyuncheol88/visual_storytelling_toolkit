@@ -28,17 +28,24 @@ jobs:
       run: |
         pip install pyinstaller
         
-    - name: Windows exe 빌드
+    - name: Windows exe 빌드 (spec 파일 사용)
       run: |
-        python build_exe.py
+        pyinstaller build_exe.spec
         
     - name: 빌드 결과 확인
       run: |
-        if (Test-Path "dist\CineScriber.exe") {
-          Write-Host "빌드 성공: CineScriber.exe 파일이 생성되었습니다."
+        if (Test-Path "dist\ShotCanvas.exe") {
+          Write-Host "빌드 성공: ShotCanvas.exe 파일이 생성되었습니다."
           Get-ChildItem "dist\" -Recurse | ForEach-Object { Write-Host $_.FullName }
+          
+          # 파일 크기 확인
+          $file = Get-Item "dist\ShotCanvas.exe"
+          $sizeMB = [math]::Round($file.Length / 1MB, 2)
+          Write-Host "파일 크기: $sizeMB MB"
         } else {
-          Write-Host "빌드 실패: exe 파일을 찾을 수 없습니다."
+          Write-Host "빌드 실패: ShotCanvas.exe 파일을 찾을 수 없습니다."
+          Write-Host "dist 폴더 내용:"
+          Get-ChildItem "dist\" -Recurse | ForEach-Object { Write-Host $_.FullName }
           exit 1
         }
         
@@ -47,10 +54,26 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          dist/CineScriber.exe
+          dist/ShotCanvas.exe
         draft: false
         prerelease: false
         generate_release_notes: true
+        tag_name: ${{ github.ref_name }}
+        name: ShotCanvas Windows v${{ github.ref_name }}
+        body: |
+          ## ShotCanvas Windows 실행 파일
+          
+          **버전**: ${{ github.ref_name }}
+          **빌드 날짜**: ${{ github.event.head_commit.timestamp }}
+          
+          ### 설치 방법
+          1. ShotCanvas.exe 파일을 다운로드
+          2. 파일을 우클릭 → 속성 → "차단 해제" 체크
+          3. 실행
+          
+          ### 주의사항
+          - Windows Defender에서 "허용" 선택 필요
+          - SmartScreen 경고 시 "추가 정보" → "실행" 클릭
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
@@ -58,6 +81,6 @@ jobs:
       if: github.event_name == 'workflow_dispatch'
       uses: actions/upload-artifact@v4
       with:
-        name: CineScriber-Windows
-        path: dist/CineScriber.exe
+        name: ShotCanvas-Windows
+        path: dist/ShotCanvas.exe
         retention-days: 30

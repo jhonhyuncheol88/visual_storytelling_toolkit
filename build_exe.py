@@ -1,28 +1,5 @@
 from __future__ import annotations
 
-import PyInstaller.__main__
-
-
-def main() -> None:
-    PyInstaller.__main__.run([
-        "-F",
-        "-w",
-        "--name",
-        "ShotCanvas",
-        "--paths",
-        "src",
-        "main.py",
-    ])
-
-
-if __name__ == "__main__":
-    main()
-
-#!/usr/bin/env python3
-"""
-Windows용 exe 파일 빌드 스크립트
-"""
-
 import os
 import sys
 import subprocess
@@ -43,25 +20,34 @@ def build_exe():
     if build_dir.exists():
         shutil.rmtree(build_dir)
     
-    # PyInstaller 명령어 구성
+    # PyInstaller 명령어 구성 - cinescribe 모듈 수집 개선
     cmd = [
         "pyinstaller",
         "--onefile",  # 단일 exe 파일로 생성
         "--windowed",  # 콘솔 창 숨김
-        "--name=CineScriber",  # exe 파일 이름
-        "--icon=AI_assets/icon.ico" if (current_dir / "AI_assets" / "icon.ico").exists() else "",
-        "--add-data=AI_assets;AI_assets",  # AI_assets 폴더 포함
-        "--add-data=시나리오_assets;시나리오_assets",  # 시나리오_assets 폴더 포함
+        "--name=ShotCanvas",  # exe 파일 이름
+        "--paths=src",  # src 폴더를 Python 경로에 추가
+        "--collect-all=cinescribe",  # cinescribe 패키지 전체 수집
+        "--hidden-import=cinescribe",
+        "--hidden-import=cinescribe.app",
+        "--hidden-import=cinescribe.domain",
+        "--hidden-import=cinescribe.repository",
+        "--hidden-import=cinescribe.service",
+        "--hidden-import=cinescribe.utils",
+        "--hidden-import=cinescribe.viewmodel",
+        "--hidden-import=cinescribe.views",
+        "--hidden-import=cinescribe.widgets",
         "--hidden-import=PySide6.QtCore",
         "--hidden-import=PySide6.QtGui", 
         "--hidden-import=PySide6.QtWidgets",
         "--hidden-import=PIL",
         "--hidden-import=PIL._tkinter_finder",
+        "--add-data=AI_assets;AI_assets",  # AI_assets 폴더 포함
+        "--add-data=시나리오_assets;시나리오_assets",  # 시나리오_assets 폴더 포함
+        "--add-data=광복절 AI 영상_assets;광복절 AI 영상_assets",  # 광복절 AI 영상_assets 폴더 포함
+        "--clean",  # 이전 빌드 캐시 정리
         "main.py"
     ]
-    
-    # 빈 문자열 제거
-    cmd = [arg for arg in cmd if arg]
     
     print("빌드 명령어:", " ".join(cmd))
     print("빌드를 시작합니다...")
@@ -70,13 +56,19 @@ def build_exe():
         # PyInstaller 실행
         result = subprocess.run(cmd, check=True, capture_output=True, text=True)
         print("빌드가 성공적으로 완료되었습니다!")
-        print(f"exe 파일 위치: {dist_dir / 'CineScriber.exe'}")
+        print(f"exe 파일 위치: {dist_dir / 'ShotCanvas.exe'}")
         
         # 빌드 결과 확인
-        exe_path = dist_dir / "CineScriber.exe"
+        exe_path = dist_dir / "ShotCanvas.exe"
         if exe_path.exists():
             size_mb = exe_path.stat().st_size / (1024 * 1024)
             print(f"파일 크기: {size_mb:.1f} MB")
+            
+            # Windows 호환성을 위한 추가 정보
+            print("\n=== Windows 실행 팁 ===")
+            print("1. exe 파일을 우클릭 → '속성' → '보안' → '차단 해제' 체크")
+            print("2. Windows Defender에서 '허용' 선택")
+            print("3. SmartScreen 경고에서 '추가 정보' → '실행' 클릭")
         else:
             print("경고: exe 파일을 찾을 수 없습니다.")
             
