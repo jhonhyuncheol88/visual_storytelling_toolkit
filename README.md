@@ -7,12 +7,12 @@ ShotCanvas는 AI를 활용한 시나리오 작성, 스토리보드 제작, 시�
 ### Windows 사용자
 
 #### 방법 1: GitHub Releases (권장)
-1. [Releases 페이지](https://github.com/사용자명/저장소명/releases) 방문
+1. [Releases 페이지](https://github.com/jeonhyuncheol/visual_storytelling_toolkit/releases) 방문
 2. 최신 버전의 `ShotCanvas.exe` 다운로드
 3. 파일을 원하는 폴더에 저장
 
 #### 방법 2: GitHub Actions Artifacts
-1. [Actions 페이지](https://github.com/사용자명/저장소명/actions) 방문
+1. [Actions 페이지](https://github.com/jeonhyuncheol/visual_storytelling_toolkit/actions) 방문
 2. 최신 `ShotCanvas-Windows` 아티팩트 다운로드
 
 ### 설치 후 실행
@@ -45,8 +45,8 @@ ShotCanvas는 AI를 활용한 시나리오 작성, 스토리보드 제작, 시�
 
 ```bash
 # 저장소 클론
-git clone https://github.com/사용자명/저장소명.git
-cd 저장소명
+git clone https://github.com/jeonhyuncheol/visual_storytelling_toolkit.git
+cd visual_storytelling_toolkit
 
 # 가상환경 생성 및 활성화
 python -m venv venv
@@ -83,6 +83,16 @@ pyinstaller build_exe.spec
 
 2. **수동 빌드**: GitHub 저장소의 Actions 탭에서 "Run workflow" 실행
 
+3. **자동 빌드 설정**:
+   - `.github/workflows/build-simple.yml` 파일이 자동으로 exe 파일을 빌드
+   - Windows 환경에서 PyInstaller를 사용하여 단일 exe 파일 생성
+   - 빌드 완료 시 GitHub Releases에 자동 업로드
+
+4. **빌드 결과**:
+   - `dist/ShotCanvas.exe` 파일이 생성됨
+   - GitHub Actions Artifacts에서 다운로드 가능
+   - 태그 푸시 시 자동으로 Releases에 업로드
+
 ## 📋 시스템 요구사항
 
 - **운영체제**: Windows 10/11 (64비트)
@@ -108,8 +118,8 @@ pyinstaller build_exe.spec
 
 ### 추가 지원
 
-- **Issues**: [GitHub Issues](https://github.com/사용자명/저장소명/issues)에서 버그 리포트
-- **Discussions**: [GitHub Discussions](https://github.com/사용자명/저장소명/discussions)에서 질문 및 제안
+- **Issues**: [GitHub Issues](https://github.com/jeonhyuncheol/visual_storytelling_toolkit/issues)에서 버그 리포트
+- **Discussions**: [GitHub Discussions](https://github.com/jeonhyuncheol/visual_storytelling_toolkit/discussions)에서 질문 및 제안
 
 ## 📄 라이선스
 

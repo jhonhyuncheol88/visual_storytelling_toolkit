@@ -1,0 +1,45 @@
+name: Build Executable
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Build with PyInstaller
+      run: |
+        pyinstaller --onefile --windowed --name=ShotCanvas --paths=src --paths=src/cinescribe --collect-all=cinescribe --collect-all=PySide6 --collect-all=PIL --hidden-import=PySide6.QtWidgets --hidden-import=PySide6.QtCore --hidden-import=PySide6.QtGui --hidden-import=shiboken6 --add-data=src/cinescribe;cinescribe --clean main.py
+        
+    - name: Upload executable
+      uses: actions/upload-artifact@v4
+      with:
+        name: ShotCanvas-Windows
+        path: dist/ShotCanvas.exe
+        
+    - name: Create Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: dist/ShotCanvas.exe
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
